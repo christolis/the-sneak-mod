@@ -21,8 +21,6 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import java.util.List;
-
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
     private static final int SPRITE_WIDTH = 18;
