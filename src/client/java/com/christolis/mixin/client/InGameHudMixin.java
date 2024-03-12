@@ -10,16 +10,12 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Arm;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
@@ -79,72 +75,6 @@ public abstract class InGameHudMixin {
 
     private boolean shouldRenderHotbar(PlayerEntity player) {
         return player.isSneaking() || player.isSprinting();
-    }
-
-    @ModifyArgs(
-            method = "renderHotbar",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V",
-                    ordinal = 0
-            ),
-            slice = @Slice(
-                    from = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/client/option/GameOptions;getAttackIndicator()Lnet/minecraft/client/option/SimpleOption;"
-                    ),
-                    to = @At(
-                            value = "TAIL"
-                    )
-            )
-    )
-
-    private void modifyArgsToFirstDrawTexture(Args args) {
-        PlayerEntity player = getCameraPlayer();
-        if (player == null) {
-            return;
-        }
-
-        Arm arm = player.getMainArm().getOpposite();
-
-        if (arm == Arm.LEFT) {
-            args.set(1, (int) args.get(1) + 24);
-        } else {
-            args.set(1, (int) args.get(1) - 24);
-        }
-    }
-
-    @ModifyArgs(
-            method = "renderHotbar",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIIIIIII)V",
-                    ordinal = 0
-            ),
-            slice = @Slice(
-                    from = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/client/option/GameOptions;getAttackIndicator()Lnet/minecraft/client/option/SimpleOption;"
-                    ),
-                    to = @At(
-                            value = "TAIL"
-                    )
-            )
-    )
-
-    private void modifyArgsToSecondDrawTexture(Args args) {
-        PlayerEntity player = getCameraPlayer();
-        if (player == null) {
-            return;
-        }
-
-        Arm arm = player.getMainArm().getOpposite();
-
-        if (arm == Arm.LEFT) {
-            args.set(5, (int) args.get(5) + 24);
-        } else {
-            args.set(5, (int) args.get(5) - 24);
-        }
     }
 }
 
