@@ -53,7 +53,7 @@ public abstract class InGameHudMixin {
         }
         final List<Sprite> sprites = new ArrayList<>();
         final Arm arm = player.getMainArm();
-        final Vec3i iconsPos = getIconsCoords(arm);
+        final Vec3i iconsPos = getIconsCoords(arm, player);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
@@ -85,7 +85,7 @@ public abstract class InGameHudMixin {
         }
     }
 
-    private Vec3i getIconsCoords(Arm arm) {
+    private Vec3i getIconsCoords(Arm arm, PlayerEntity player) {
         final int y = this.scaledHeight - 20;
         int x;
 
@@ -93,6 +93,12 @@ public abstract class InGameHudMixin {
             x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
         } else {
             x = (this.scaledWidth + 182) / 2 + 6;
+        }
+
+        if (!player.getOffHandStack().isEmpty()) {
+            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int offset = (SPRITE_WIDTH + 8) * dir;
+            x += offset;
         }
 
         return new Vec3i(x, y, 0);
