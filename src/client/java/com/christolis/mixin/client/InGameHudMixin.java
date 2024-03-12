@@ -10,6 +10,8 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.math.Vec3i;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,8 +52,8 @@ public abstract class InGameHudMixin {
             return;
         }
         final List<Sprite> sprites = new ArrayList<>();
-        final int x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
-        final int y = this.scaledHeight - 20;
+        final Arm arm = player.getMainArm();
+        final Vec3i iconsPos = getIconsCoords(arm);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
@@ -69,17 +71,31 @@ public abstract class InGameHudMixin {
             sprites.add(spriteManager.getSprite(StatusEffects.SLOWNESS));
         }
 
-        renderIndicators(sprites, drawContext, x, y);
+        renderIndicators(sprites, drawContext, arm, iconsPos.getX(), iconsPos.getY());
     }
 
-    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, int x, int y) {
+    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x, int y) {
         for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
             final Sprite sprite = sprites.get(spriteIdx);
-            final int offsetX = x - (SPRITE_WIDTH * spriteIdx);
+            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int offsetX = x + (SPRITE_WIDTH * spriteIdx) * dir;
 
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
             drawContext.drawSprite(offsetX, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
         }
+    }
+
+    private Vec3i getIconsCoords(Arm arm) {
+        final int y = this.scaledHeight - 20;
+        int x;
+
+        if (arm == Arm.RIGHT) {
+            x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
+        } else {
+            x = (this.scaledWidth + 182) / 2 + 6;
+        }
+
+        return new Vec3i(x, y, 0);
     }
 
     private boolean shouldRenderHotbar(PlayerEntity player) {
