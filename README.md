@@ -1,5 +1,6 @@
-# The Sneak Mod
-# Screenshots
+# The Sneak Sprint Mod
+
+## Screenshots
 ![output](https://github.com/christolis/the-sneak-mod/assets/26795353/0159fcd3-fdd7-4078-803c-ac0b0d5c0b47)
 
 ## License

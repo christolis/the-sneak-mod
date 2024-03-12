@@ -3,20 +3,20 @@
 	"id": "modid",
 	"version": "${version}",
 	"name": "Sneak Mod",
-	"description": "Want to know when you are sneaking? This mod is the deal then.",
+	"description": "Want to know when you are sneaking or sprinting? This mod is the deal then.",
 	"authors": [
 		"christolis"
 	],
 	"contact": {
 		"homepage": "https://chris-sdogkos.com/",
-		"sources": "https://github.com/christolis/the-sneak-mod"
+		"sources": "https://github.com/christolis/the-sneak-sprint-mod"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/modid/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.christolis.SneakMod"
+			"com.christolis.SneakSprintMod"
 		],
 		"client": [
 			"com.christolis.ModClient"
