@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
     private static final int SPRITE_WIDTH = 18;
@@ -46,6 +49,8 @@ public abstract class InGameHudMixin {
         if (!shouldRenderHotbar(player)) {
             return;
         }
+        final List<Sprite> sprites = new ArrayList<>();
+        final int x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
         final int y = this.scaledHeight - 20;
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -56,20 +61,24 @@ public abstract class InGameHudMixin {
         StatusEffectSpriteManager spriteManager =
                 this.client.getStatusEffectSpriteManager();
 
-        if (player.isSneaking()) {
-            Sprite sprite = spriteManager.getSprite(StatusEffects.SLOWNESS);
-            final int x = (this.scaledWidth + 182) / 2 + 6;
-
-            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH,  SPRITE_HEIGHT, sprite);
+        if (player.isSprinting()) {
+            sprites.add(spriteManager.getSprite(StatusEffects.SPEED));
         }
 
-        if (player.isSprinting()) {
-            Sprite sprite = spriteManager.getSprite(StatusEffects.SPEED);
-            final int x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
+        if (player.isSneaking()) {
+            sprites.add(spriteManager.getSprite(StatusEffects.SLOWNESS));
+        }
+
+        renderIndicators(sprites, drawContext, x, y);
+    }
+
+    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, int x, int y) {
+        for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
+            final Sprite sprite = sprites.get(spriteIdx);
+            final int offsetX = x - (SPRITE_WIDTH * spriteIdx);
 
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
+            drawContext.drawSprite(offsetX, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
         }
     }
 
