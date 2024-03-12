@@ -21,8 +21,13 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import java.util.List;
+
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
+    private static final int SPRITE_WIDTH = 18;
+    private static final int SPRITE_HEIGHT = 18;
+
     @Final
     @Shadow
     private MinecraftClient client;
@@ -38,32 +43,44 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "renderHotbar", at = @At(value = "TAIL"))
     private void afterRenderHotbar(float partialTicks, DrawContext drawContext, CallbackInfo info) {
-        PlayerEntity player = getCameraPlayer();
+        final PlayerEntity player = getCameraPlayer();
 
         if (!(player instanceof ClientPlayerEntity)) {
             return;
         }
 
-        if (!player.isSneaking()) {
+        if (!shouldRenderHotbar(player)) {
             return;
         }
-
-        Arm arm = player.getMainArm().getOpposite();
-
-        int x =
-                arm == Arm.LEFT ? (this.scaledWidth + 182) / 2 + 6 : (this.scaledWidth - 182) / 2 - 18 - 6;
-        int y = this.scaledHeight - 20;
+        final int y = this.scaledHeight - 20;
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        StatusEffectSpriteManager statusEffectSpriteManager =
+        StatusEffectSpriteManager spriteManager =
                 this.client.getStatusEffectSpriteManager();
-        Sprite sprite = statusEffectSpriteManager.getSprite(StatusEffects.SLOWNESS);
-        RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-        drawContext.drawSprite(x, y, 0, 18, 18, sprite);
+
+        if (player.isSneaking()) {
+            Sprite sprite = spriteManager.getSprite(StatusEffects.SLOWNESS);
+            final int x = (this.scaledWidth + 182) / 2 + 6;
+
+            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
+            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH,  SPRITE_HEIGHT, sprite);
+        }
+
+        if (player.isSprinting()) {
+            Sprite sprite = spriteManager.getSprite(StatusEffects.SPEED);
+            final int x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
+
+            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
+            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
+        }
+    }
+
+    private boolean shouldRenderHotbar(PlayerEntity player) {
+        return player.isSneaking() || player.isSprinting();
     }
 
     @ModifyArgs(
