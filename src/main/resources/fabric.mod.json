@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "modid",
+	"version": "${version}",
+	"name": "Sneak Mod",
+	"description": "Want to know when you are sneaking? This mod is the deal then.",
+	"authors": [
+		"christolis"
+	],
+	"contact": {
+		"homepage": "https://chris-sdogkos.com/",
+		"sources": "https://github.com/christolis/the-sneak-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/modid/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.christolis.SneakMod"
+		],
+		"client": [
+			"com.christolis.ModClient"
+		]
+	},
+	"mixins": [
+		"modid.mixins.json",
+		{
+			"config": "modid.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
