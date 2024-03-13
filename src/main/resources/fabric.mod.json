@@ -10,7 +10,8 @@
 	],
 	"contact": {
 		"homepage": "https://chris-sdogkos.com/",
-		"sources": "https://github.com/christolis/the-sneak-sprint-mod"
+		"sources": "https://github.com/christolis/the-sneak-sprint-mod",
+		"issues": "https://github.com/christolis/the-sneak-sprint-mod/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/modid/icon.png",
