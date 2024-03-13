@@ -1,6 +1,6 @@
 package com.christolis.mixin.client;
 
-import com.christolis.ModClient;
+import com.christolis.SneakSprintClientMod;
 import com.christolis.config.Config;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -45,7 +45,7 @@ public abstract class InGameHudMixin {
     @Inject(method = "renderHotbar", at = @At(value = "TAIL"))
     private void afterRenderHotbar(float partialTicks, DrawContext drawContext, CallbackInfo info) {
         final PlayerEntity player = getCameraPlayer();
-        Config config = ModClient.CONFIG_MANAGER.getConfig();
+        Config config = SneakSprintClientMod.CONFIG_MANAGER.getConfig();
 
         if (!config.isEnabled()) {
             return;

@@ -1,6 +1,6 @@
 package com.christolis.config;
 
-import com.christolis.ModClient;
+import com.christolis.SneakSprintClientMod;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.EnvType;
@@ -11,6 +11,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return ModClient.CONFIG_MANAGER::getScreen;
+        return SneakSprintClientMod.CONFIG_MANAGER::getScreen;
     }
 }

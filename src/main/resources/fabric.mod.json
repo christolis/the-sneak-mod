@@ -21,7 +21,7 @@
 			"com.christolis.SneakSprintMod"
 		],
 		"client": [
-			"com.christolis.ModClient"
+			"com.christolis.SneakSprintClientMod"
 		],
 		"modmenu": [
 			"com.christolis.config.ModMenuIntegration"
