@@ -77,7 +77,7 @@ public abstract class InGameHudMixin {
     private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x, int y) {
         for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
             final Sprite sprite = sprites.get(spriteIdx);
-            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int dir = arm == Arm.RIGHT ? 1 : -1;
             final int offsetX = x + (SPRITE_WIDTH * spriteIdx) * dir;
 
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
@@ -89,16 +89,10 @@ public abstract class InGameHudMixin {
         final int y = this.scaledHeight - 20;
         int x;
 
-        if (arm == Arm.RIGHT) {
+        if (arm == Arm.LEFT) {
             x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
         } else {
             x = (this.scaledWidth + 182) / 2 + 6;
-        }
-
-        if (!player.getOffHandStack().isEmpty()) {
-            final int dir = arm == Arm.LEFT ? 1 : -1;
-            final int offset = (SPRITE_WIDTH + 8) * dir;
-            x += offset;
         }
 
         return new Vec3i(x, y, 0);
