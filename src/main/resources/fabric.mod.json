@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "sneak-sprint",
 	"version": "${version}",
-	"name": "Sneak Mod",
-	"description": "Want to know when you are sneaking or sprinting? This mod is the deal then.",
+	"name": "Sneak/Sprint Indicator",
+	"description": "Want to know when you are sneaking or sprinting?\nThis mod is the deal then.",
 	"authors": [
 		"christolis"
 	],
