@@ -1,5 +1,7 @@
 package com.christolis.mixin.client;
 
+import com.christolis.SneakSprintClientMod;
+import com.christolis.config.Config;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -43,6 +45,11 @@ public abstract class InGameHudMixin {
     @Inject(method = "renderHotbar", at = @At(value = "TAIL"))
     private void afterRenderHotbar(float partialTicks, DrawContext drawContext, CallbackInfo info) {
         final PlayerEntity player = getCameraPlayer();
+        Config config = SneakSprintClientMod.CONFIG_MANAGER.getConfig();
+
+        if (!config.isEnabled()) {
+            return;
+        }
 
         if (!(player instanceof ClientPlayerEntity)) {
             return;
@@ -60,24 +67,24 @@ public abstract class InGameHudMixin {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        StatusEffectSpriteManager spriteManager =
-                this.client.getStatusEffectSpriteManager();
+        StatusEffectSpriteManager spriteManager = this.client.getStatusEffectSpriteManager();
 
-        if (player.isSprinting()) {
+        if (player.isSprinting() && config.isSprintEnabled()) {
             sprites.add(spriteManager.getSprite(StatusEffects.SPEED));
         }
 
-        if (player.isSneaking()) {
+        if (player.isSneaking() && config.isSneakEnabled()) {
             sprites.add(spriteManager.getSprite(StatusEffects.SLOWNESS));
         }
 
         renderIndicators(sprites, drawContext, arm, iconsPos.getX(), iconsPos.getY());
     }
 
-    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x, int y) {
+    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x,
+            int y) {
         for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
             final Sprite sprite = sprites.get(spriteIdx);
-            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int dir = arm == Arm.RIGHT ? 1 : -1;
             final int offsetX = x + (SPRITE_WIDTH * spriteIdx) * dir;
 
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
@@ -89,16 +96,10 @@ public abstract class InGameHudMixin {
         final int y = this.scaledHeight - 20;
         int x;
 
-        if (arm == Arm.RIGHT) {
+        if (arm == Arm.LEFT) {
             x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
         } else {
             x = (this.scaledWidth + 182) / 2 + 6;
-        }
-
-        if (!player.getOffHandStack().isEmpty()) {
-            final int dir = arm == Arm.LEFT ? 1 : -1;
-            final int offset = (SPRITE_WIDTH + 8) * dir;
-            x += offset;
         }
 
         return new Vec3i(x, y, 0);
@@ -108,4 +109,3 @@ public abstract class InGameHudMixin {
         return player.isSneaking() || player.isSprinting();
     }
 }
-

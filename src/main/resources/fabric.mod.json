@@ -2,14 +2,16 @@
 	"schemaVersion": 1,
 	"id": "sneak-sprint",
 	"version": "${version}",
-	"name": "Sneak Mod",
-	"description": "Want to know when you are sneaking or sprinting? This mod is the deal then.",
+	"name": "Sneak/Sprint Indicator",
+	"description": "Want to know when you are sneaking or sprinting?\n\u00a78This mod is the deal then.",
 	"authors": [
-		"christolis"
+		"christolis",
+		"sir_crazynut"
 	],
 	"contact": {
 		"homepage": "https://chris-sdogkos.com/",
-		"sources": "https://github.com/christolis/the-sneak-sprint-mod"
+		"sources": "https://github.com/christolis/the-sneak-sprint-mod",
+		"issues": "https://github.com/christolis/the-sneak-sprint-mod/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/modid/icon.png",
@@ -19,7 +21,10 @@
 			"com.christolis.SneakSprintMod"
 		],
 		"client": [
-			"com.christolis.ModClient"
+			"com.christolis.SneakSprintClientMod"
+		],
+		"modmenu": [
+			"com.christolis.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
