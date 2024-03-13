@@ -22,6 +22,9 @@
 		],
 		"client": [
 			"com.christolis.ModClient"
+		],
+		"modmenu": [
+			"com.christolis.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
