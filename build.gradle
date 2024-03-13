@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.5-SNAPSHOT'
 	id 'maven-publish'
+	id "com.diffplug.spotless" version "6.25.0"
 }
 
 version = project.mod_version
@@ -74,6 +75,15 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+spotless {
+	java {
+		targetExclude("build/**")
+		endWithNewline()
+		removeUnusedImports()
+		eclipse('4.19').configFile("${rootProject.rootDir}/meta/formatting/google-style-eclipse.xml")
 	}
 }
 

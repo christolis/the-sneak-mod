@@ -67,8 +67,7 @@ public abstract class InGameHudMixin {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        StatusEffectSpriteManager spriteManager =
-                this.client.getStatusEffectSpriteManager();
+        StatusEffectSpriteManager spriteManager = this.client.getStatusEffectSpriteManager();
 
         if (player.isSprinting() && config.isSprintEnabled()) {
             sprites.add(spriteManager.getSprite(StatusEffects.SPEED));
@@ -81,7 +80,8 @@ public abstract class InGameHudMixin {
         renderIndicators(sprites, drawContext, arm, iconsPos.getX(), iconsPos.getY());
     }
 
-    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x, int y) {
+    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x,
+            int y) {
         for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
             final Sprite sprite = sprites.get(spriteIdx);
             final int dir = arm == Arm.RIGHT ? 1 : -1;
@@ -109,4 +109,3 @@ public abstract class InGameHudMixin {
         return player.isSneaking() || player.isSprinting();
     }
 }
-

@@ -31,17 +31,15 @@ public final class ConfigManager {
     private Config config = new Config();
 
     public ConfigManager() {
-         this.gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create();
-         File configDir = FabricLoader.getInstance().getConfigDir().toFile();
-         file = new File(configDir, "sneaksprint/config.json");
+        this.gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        File configDir = FabricLoader.getInstance().getConfigDir().toFile();
+        file = new File(configDir, "sneaksprint/config.json");
     }
 
     public void save() {
         try {
-            FileUtils.writeStringToFile(this.file, this.gson.toJson(this.config), Charset.defaultCharset());
+            FileUtils.writeStringToFile(this.file, this.gson.toJson(this.config),
+                    Charset.defaultCharset());
         } catch (IOException e) {
             log.error("Failed to save config", e);
         }
@@ -58,7 +56,8 @@ public final class ConfigManager {
                 this.save();
             } else {
                 byte[] bytes = Files.readAllBytes(Paths.get(this.file.getPath()));
-                this.config = this.gson.fromJson(new String(bytes, Charset.defaultCharset()), Config.class);
+                this.config = this.gson.fromJson(new String(bytes, Charset.defaultCharset()),
+                        Config.class);
             }
         } catch (IOException e) {
             log.error("Failed to load configuration file", e);
@@ -72,10 +71,10 @@ public final class ConfigManager {
     @Environment(EnvType.CLIENT)
     public Screen getScreen(Screen parent) {
         ConfigBuilder configBuilder = ConfigBuilder.create()
-                .setParentScreen(parent)
-                .setTransparentBackground(true)
-                .setSavingRunnable(this::save)
-                .setTitle(Text.of(MENU_TITLE));
+            .setParentScreen(parent)
+            .setTransparentBackground(true)
+            .setSavingRunnable(this::save)
+            .setTitle(Text.of(MENU_TITLE));
 
         ConfigCategory category = configBuilder.getOrCreateCategory(Text.of("Category"));
 
@@ -90,32 +89,34 @@ public final class ConfigManager {
     private BooleanListEntry generateEnableModEntry(ConfigBuilder configBuilder) {
         ConfigEntryBuilder entryBuilder = configBuilder.entryBuilder();
         return entryBuilder.startBooleanToggle(Text.of("Enable mod"), this.config.isEnabled())
-                .setDefaultValue(true)
-                .setSaveConsumer(this.config::setEnabled)
-                .build();
+            .setDefaultValue(true)
+            .setSaveConsumer(this.config::setEnabled)
+            .build();
     }
 
     private BooleanListEntry generateEnableSneakEntry(ConfigBuilder configBuilder) {
         ConfigEntryBuilder entryBuilder = configBuilder.entryBuilder();
-        return entryBuilder.startBooleanToggle(Text.of("Enable sneak"), this.config.isSneakEnabled())
-                .setTooltip(Text.of("""
-                        Toggle whether the sneak indicator
-                        should be visible or not.
-                        """))
-                .setDefaultValue(true)
-                .setSaveConsumer(this.config::setSneakEnabled)
-                .build();
+        return entryBuilder
+            .startBooleanToggle(Text.of("Enable sneak"), this.config.isSneakEnabled())
+            .setTooltip(Text.of("""
+                    Toggle whether the sneak indicator
+                    should be visible or not.
+                    """))
+            .setDefaultValue(true)
+            .setSaveConsumer(this.config::setSneakEnabled)
+            .build();
     }
 
     private BooleanListEntry generateEnableSprintEntry(ConfigBuilder configBuilder) {
         ConfigEntryBuilder entryBuilder = configBuilder.entryBuilder();
-        return entryBuilder.startBooleanToggle(Text.of("Enable sprint"), this.config.isSprintEnabled())
-                .setTooltip(Text.of("""
-                        Toggle whether the sprint indicator
-                        should be visible or not.
-                        """))
-                .setDefaultValue(true)
-                .setSaveConsumer(this.config::setSprintEnabled)
-                .build();
+        return entryBuilder
+            .startBooleanToggle(Text.of("Enable sprint"), this.config.isSprintEnabled())
+            .setTooltip(Text.of("""
+                    Toggle whether the sprint indicator
+                    should be visible or not.
+                    """))
+            .setDefaultValue(true)
+            .setSaveConsumer(this.config::setSprintEnabled)
+            .build();
     }
 }
