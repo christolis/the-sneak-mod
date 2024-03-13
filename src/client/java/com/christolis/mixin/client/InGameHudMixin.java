@@ -10,12 +10,17 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.math.Vec3i;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
@@ -46,7 +51,9 @@ public abstract class InGameHudMixin {
         if (!shouldRenderHotbar(player)) {
             return;
         }
-        final int y = this.scaledHeight - 20;
+        final List<Sprite> sprites = new ArrayList<>();
+        final Arm arm = player.getMainArm();
+        final Vec3i iconsPos = getIconsCoords(arm, player);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
@@ -56,21 +63,45 @@ public abstract class InGameHudMixin {
         StatusEffectSpriteManager spriteManager =
                 this.client.getStatusEffectSpriteManager();
 
-        if (player.isSneaking()) {
-            Sprite sprite = spriteManager.getSprite(StatusEffects.SLOWNESS);
-            final int x = (this.scaledWidth + 182) / 2 + 6;
-
-            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH,  SPRITE_HEIGHT, sprite);
-        }
-
         if (player.isSprinting()) {
-            Sprite sprite = spriteManager.getSprite(StatusEffects.SPEED);
-            final int x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
+            sprites.add(spriteManager.getSprite(StatusEffects.SPEED));
+        }
+
+        if (player.isSneaking()) {
+            sprites.add(spriteManager.getSprite(StatusEffects.SLOWNESS));
+        }
+
+        renderIndicators(sprites, drawContext, arm, iconsPos.getX(), iconsPos.getY());
+    }
+
+    private void renderIndicators(List<Sprite> sprites, DrawContext drawContext, Arm arm, int x, int y) {
+        for (int spriteIdx = 0; spriteIdx < sprites.size(); spriteIdx++) {
+            final Sprite sprite = sprites.get(spriteIdx);
+            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int offsetX = x + (SPRITE_WIDTH * spriteIdx) * dir;
 
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            drawContext.drawSprite(x, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
+            drawContext.drawSprite(offsetX, y, 0, SPRITE_WIDTH, SPRITE_HEIGHT, sprite);
         }
+    }
+
+    private Vec3i getIconsCoords(Arm arm, PlayerEntity player) {
+        final int y = this.scaledHeight - 20;
+        int x;
+
+        if (arm == Arm.RIGHT) {
+            x = (this.scaledWidth - 182) / 2 - SPRITE_WIDTH - 6;
+        } else {
+            x = (this.scaledWidth + 182) / 2 + 6;
+        }
+
+        if (!player.getOffHandStack().isEmpty()) {
+            final int dir = arm == Arm.LEFT ? 1 : -1;
+            final int offset = (SPRITE_WIDTH + 8) * dir;
+            x += offset;
+        }
+
+        return new Vec3i(x, y, 0);
     }
 
     private boolean shouldRenderHotbar(PlayerEntity player) {
