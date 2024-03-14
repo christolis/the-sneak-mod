@@ -1,0 +1,1 @@
+- Add CI pipeline which automates things a little when it comes to releasing versions.
